@@ -69,7 +69,8 @@ where department_id in(10,90,100);
 select first_name 이름,
        salary 월급 
 from employees
-where first_name like 'S%';
+where first_name like '%S%'
+or first_name like '%s%';
 
 	/*문제 8.
 	전체 부서를 출력하려고 합니다. 순서는 부서이름이 긴 순서대로 출력해 보세오.
