@@ -345,3 +345,10 @@ select sysdate,
         to_char(sysdate,'MI'),
         to_char(sysdate,'SS')
 from dual;
+
+--null 처리
+select  first_name,
+        commission_pct,
+        nvl(commission_pct,0),
+        nvl2(commission_pct,100,0) -- 값이있으면 100 null이면 0
+from employees;
