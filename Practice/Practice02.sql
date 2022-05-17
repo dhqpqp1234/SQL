@@ -8,12 +8,12 @@ from employees;
 /*
 문제2.
 직원중에 최고임금(salary)과 최저임금을 “최고임금, “최저임금”프로젝션 타이틀로 함께 출력
-해 보세요. 두 임금의 차이는 얼마인가요? “최고임금 – 최저임금”이란 타이틀로 함께 출력
+해 보세요. 두 임금의 차이는 얼마인가요? “최고임금 ? 최저임금”이란 타이틀로 함께 출력
 해 보세요.
 */
 select max(salary) 최고임금,
        min(salary) 최저임금,
-       max(salary)-min(salary) 차이
+       max(salary) - min(salary) 차이
 from employees;
 
 /*
@@ -21,8 +21,7 @@ from employees;
 마지막으로 신입사원이 들어온 날은 언제 입니까? 다음 형식으로 출력해주세요.
 예) 2014년 07월 10일
 */
-select  
-        max(to_char(hire_date,'YYYY"년"MM"월"DD"일"'))   
+select max(to_char(hire_date,'YYYY"년"MM"월"DD"일"'))
 from employees;
 
 /*
@@ -33,9 +32,9 @@ from employees;
 select round(avg(salary)) 평균임금,
        max(salary) 최고임금,
        min(salary) 최저임금,
-       department_id 부서아이디
+       department_id 부서번호
 from employees
-GROUP by department_id
+group by department_id
 order by department_id asc;
 
 /*
@@ -50,54 +49,63 @@ select round(avg(salary)) 평균임금,
        job_id 업무아이디
 from employees
 group by job_id
-order by avg(salary) desc;
+order by min(salary) asc, max(salary) desc;
 
 /*
 문제6.
 가장 오래 근속한 직원의 입사일은 언제인가요? 다음 형식으로 출력해주세요.
 예) 2001-01-13 토요일
 */
-select max(to_char(hire_date,'YYYY"년"MM"월"DD"일"'))
+select min(to_char(hire_date,'YYYY-MM-DD DAY'))
 from employees;
+
 
 /*
 문제7.
 평균임금과 최저임금의 차이가 2000 미만인 부서(department_id), 평균임금, 최저임금 그리
-고 (평균임금 – 최저임금)를 (평균임금 – 최저임금)의 내림차순으로 정렬해서 출력하세요.
+고 (평균임금 ? 최저임금)를 (평균임금 ? 최저임금)의 내림차순으로 정렬해서 출력하세요.
 */
-select department_id,
-       avg(salary) 평균임금,
-       min(salary) 최저임금,
-       avg(salary)-min(salary) 차이
-       
+select round(avg(salary)) 평균임금,
+       min(salary) 최저임금
 from employees
 group by department_id
-having avg(salary)-min(salary)<2000
+having avg(salary)-min(salary) >2000
 order by avg(salary)-min(salary) asc;
 
+
+select avg(salary) 평균임금,
+       min(salary) 최저임금,
+       avg(salary) - min(salary) 차이
+from employees;
 /*
 문제8.
 업무(JOBS)별로 최고임금과 최저임금의 차이를 출력해보세요.
 차이를 확인할 수 있도록 내림차순으로 정렬하세요?
 */
- select job_title 업무별,
-        max_salary 최고임금,
-        min_salary 최저임금,
-        max_salary-min_salary 차이
- from jobs
- order by max_salary-min_salary asc;
+select max(salary) - min(salary) 차이
+from employees
+group by job_id
+order by max(salary) - min(salary) asc;
+
+
  /*
  문제 9.
  2005년 이후 입사자중 관리자별로 평균급여 최소급여 최대급여를 알아보려고 한다.
 출력은 관리자별로 평균급여가 5000이상 중에 평균급여 최소급여 최대급여를 출력합니다.
 평균급여의 내림차순으로 정렬하고 평균급여는 소수점 첫째짜리에서 반올림 하여 출력합니다.
  */
-select count(manager_id) 관리자,
-       avg(salary) 평균급여,
+select manager_id 관리자,
+       round(avg(salary)) 평균급여,
        min(salary) 최소급여,
-       max(salary) 최대급여
+       max(salary) 최대급여,
+       hire_date 입사일 
 from employees
-where hire_date>'05/01/01' ;
+having avg(salary)>=5000
+and hire_date>'05/01/01'
+group by manager_id, hire_date
+order by avg(salary) asc;
+
+
 
 /*
 문제10.
