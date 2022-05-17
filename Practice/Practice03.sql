@@ -5,13 +5,13 @@
 요.
 (106건)
 */
-select em.employee_id 사번,
-       em.first_name 이름,
-       em.last_name 성,
-       de.department_name 부서명
-from employees em,departments de
-where em.department_id = de.department_id
-order by de.department_name desc, em.employee_id asc;
+select e.employee_id 사번,
+       e.first_name 이름,
+       e.last_name 성,
+       d.department_name 부서명
+from employees e, departments d
+where e.department_id = d.department_id
+order by d.department_name desc, e.employee_id asc;
 
 /*
 문제2.
@@ -21,15 +21,15 @@ employees 테이블의 job_id는 현재의 업무아이디를 가지고 있습�
 부서가 없는 Kimberely(사번 178)은 표시하지 않습니다.
 (106건)
 */
-select em.employee_id 사번,
-       em.first_name 이름,
-       em.salary 급여,
-       de.department_name 부서명,
-       jo.job_title 현재업무
-from employees em, departments de, jobs jo
-where em.department_id = de.department_id 
-and em.job_id = jo.job_id
-order by em.employee_id desc;
+select e.employee_id 사번,
+       e.first_name 이름,
+       e.salary 급여,
+       d.department_name 부서명,
+       j.job_title 현재업무
+from employees e, departments d, jobs j
+where e.department_id = d.department_id
+and e.job_id = j.job_id
+order by e.employee_id desc;
 
 /*
 문제2-1.
@@ -53,13 +53,13 @@ order by em.employee_id desc;
 부서가 없는 도시는 표시하지 않습니다.
 (27건)
 */
-select lo.location_id 도시아이디,
-       lo.city 도시명,
-       de.department_name 부서명,
-       de.department_id 부서아이디
-from  departments de , locations lo
-where de.location_id = lo.location_id
-order by de.location_id desc;
+select l.location_id 도시아이디,
+       l.city 도시명,
+       d.department_name 부서명,
+       d.department_id 부서아이디
+from departments d, locations l
+where d.location_id = l.location_id
+order by d.department_id desc;
 
 /*
 문제3-1.
@@ -70,8 +70,8 @@ select lo.location_id 도시아이디,
        lo.city 도시명,
        de.department_name 부서명,
        de.department_id 부서아이디
-from  departments de full outer join locations lo
-on  de.location_id = lo.location_id
+from  departments de,  locations lo
+where  de.location_id(+) = lo.location_id
 order by de.location_id desc;
 
 /*
@@ -80,10 +80,12 @@ order by de.location_id desc;
 되 지역이름(오름차순), 나라이름(내림차순) 으로 정렬하세요.
 (25건)
 */
-select re.region_name 지역이름,
-       co.country_name 나라이름 
-from regions re, countries co
-order by re.region_name desc, co.country_name asc;
+
+select r.region_name 지역이름,
+       c.country_name 나라이름
+from countries c, regions r
+where c.region_id = r.region_id
+order by r.region_name desc, c.country_name asc;
 
 /*
 문제5. 
@@ -92,16 +94,17 @@ order by re.region_name desc, co.country_name asc;
 사일(hire_date)을 조회하세요.
 (37건)
 */
---다시이해다시이해다시이해다시이해다시이해다시이해다시이해다시이해다시이해다시이해다시이해
-select 
-       em.employee_id 사번,
-       em.first_name 이름,
-       em.hire_date 채용일,
+
+select e.employee_id 사번,
+       e.first_name 이름,
+       e.hire_date 채용일,
        ma.first_name 매니저이름,
-       ma.hire_date 매니저채용일
-from  employees em ,employees ma
-where em.hire_date<ma.hire_date
-and em.manager_id = ma.employee_id;
+       ma.hire_date 매니저입사일
+from employees e, employees ma
+where ma.hire_date>e.hire_date
+and e.manager_id = ma.employee_id;
+
+
 
 /*
 문제6.
@@ -111,16 +114,16 @@ and em.manager_id = ma.employee_id;
 값이 없는 경우 표시하지 않습니다.
 (27건)
 */
-select co.country_name 나라명,
-       co.country_id 나라아이디,
-       lo.city 도시명,
-       lo.location_id 도시아이디,
-       de.department_name 부서명,
-       de.department_id 부서아이디
-from countries co , locations lo , departments de
-where de.location_id = lo.location_id
-and lo.country_id = co.country_id
-order by co.country_name desc;
+select c.country_name 나라명,
+       c.country_id 나라아이디,
+       l.city 도시명,
+       l.location_id 도시아이디,
+       d.department_name 부서명,
+       d.department_id 부서아이디
+from departments d, countries c, locations l
+where d.location_id = l.location_id
+and l.country_id = c.country_id
+order by c.country_name desc;
 
 /*
 문제7.
@@ -130,14 +133,14 @@ job_history 테이블은 과거의 담당업무의 데이터를 가지고 있다
 이름은 first_name과 last_name을 합쳐 출력합니다.
 (2건)
 */
-select em.employee_id 사번,
-       em.last_name || em.first_name 이름 ,
-       jh.job_id 업무아이디,
-       jh.start_date 시작일,
-       jh.end_date 종료일
-from employees em, job_history jh
-where em.employee_id = jh.employee_id
-and jh.job_id = 'AC_ACCOUNT';
+select e.employee_id 사번,
+       e.first_name || e.last_name 이름,
+       e.job_id 업무아이디,
+       j.start_date 시작일,
+       j.end_date 종료일
+from employees e, job_history j
+where e.employee_id = j.employee_id
+and j.job_id = 'AC_ACCOUNT';
 
 /*
 문제8.
@@ -146,18 +149,19 @@ and jh.job_id = 'AC_ACCOUNT';
 (countries_name) 그리고 지역구분(regions)의 이름(resion_name)까지 전부 출력해 보세요.
 (11건)
 */
-select de.department_id 부서번호,
-       de.department_name 부서이름,
-       em.first_name 매니저이름,
-       lo.city 위치한도시,
-       co.country_name 나라이름,
-       re.region_name 지역이름
-from  employees em, departments de, locations lo, countries co, regions re
-where de.manager_id = em.employee_id
-and de.location_id = lo.location_id
-and lo.country_id = co.country_id
-and co.region_id = re.region_id;
---다시이해다시이해다시이해다시이해다시이해다시이해다시이해다시이해다시이해다시이해다시이해
+select d.department_id 부서번호,
+       d.department_name 부서이름,
+       e.first_name 매니저이름,
+       l.city 도시,
+       c.country_name 나라이름,
+       r.region_name 지역이름
+from employees e, departments d, countries c, regions r, locations l
+where d.manager_id = e.employee_id
+and d.location_id = l.location_id
+and l.country_id = c.country_id
+and c.region_id = r.region_id;
+
+
 /*
 문제9.
 각 사원(employee)에 대해서 사번(employee_id), 이름(first_name), 부서명
@@ -165,11 +169,10 @@ and co.region_id = re.region_id;
 부서가 없는 직원(Kimberely)도 표시합니다.
 (106명)
 */
-select em.employee_id 사번,
-       em.first_name 이름,
-       de.department_name 부서명,
+select e.employee_id 사번,
+       e.first_name 이름,
+       d.department_name 부서명,
        ma.first_name 매니저이름
-from employees em, employees ma , departments de 
-where em.department_id = de.department_id
-and em.manager_id = ma.employee_id(+);
---다시이해다시이해다시이해다시이해다시이해다시이해다시이해다시이해다시이해다시이해다시이해
+from employees e, EMPLOYEES ma, departments d
+where e.department_id = d.department_id(+)
+and ma.employee_id = e.manager_id;
