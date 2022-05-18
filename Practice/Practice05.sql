@@ -53,7 +53,19 @@ group by department_id;
 니저별최대급여 입니다.
 (9건)
 */
-
+select m.manager_id 매니저아이디,
+       m.first_name 매니저이름,
+       avg(e.salary) 매니저별평균급여,
+       min(e.salary) 매니저별최소급여,
+       max(e.salary) 매니저별최대급여
+from employees e, employees m
+where e.hire_date > '2005/12/31'
+and m.employee_id = e.manager_id
+group by m.manager_id, m.first_name
+having avg(e.salary) >=5000
+order by avg(e.salary)asc;
+                                        
+                                        
 /*
 문제4.
 각 사원(employee)에 대해서 사번(employee_id), 이름(first_name), 부서명
